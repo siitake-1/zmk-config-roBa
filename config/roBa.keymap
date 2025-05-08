@@ -60,6 +60,33 @@
             #binding-cells = <2>;
             tapping-term-ms = <200>;
         };
+
+        backslashUnderscore: backslashUnderscore {
+            compatible = "zmk,behavior-mod-morph";
+            label = "BACKSLASHUNDERSCORE";
+            bindings = <&kp SLASH>, <&kp UNDERSCORE>;
+
+            #binding-cells = <0>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        minusequal: minusequal {
+            compatible = "zmk,behavior-mod-morph";
+            label = "MINUSEQUAL";
+            bindings = <&kp MINUS>, <&kp EQUAL>;
+
+            #binding-cells = <0>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        coronSemicoron: coronSemicoron {
+            compatible = "zmk,behavior-mod-morph";
+            label = "CORONSEMICORON";
+            bindings = <&kp COLON>, <&kp SEMI>;
+
+            #binding-cells = <0>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
     };
 
     keymap {
@@ -67,10 +94,10 @@
 
         default_layer {
             bindings = <
-&kp Q           &kp W         &kp E         &kp R                        &kp T                                                          &kp Y        &kp U  &lt 5 I    &kp O    &kp P
-&kp A           &kp S         &kp D         &kp F                        &kp G        &kp LS(LG(S))                      &kp MINUS      &kp H        &kp J  &kp K      &kp L    &kp SQT
-&kp Z           &kp X         &kp C         &kp V                        &kp B        &kp ESC                            &kp SEMICOLON  &kp N        &kp M  &kp COMMA  &kp DOT  &kp SLASH
-&kp LEFT_SHIFT  &kp LEFT_WIN  &kp LEFT_ALT  &lt_to_layer_0 6 INT_HENKAN  &lt 2 SPACE  &lt_to_layer_0 3 INT_MUHENKAN      &kp BACKSPACE  &lt 1 ENTER                             &kp DEL
+&kp Q       &kp W         &kp E         &kp R                        &kp T                                                            &kp Y        &kp U  &lt 5 I    &kp O    &kp P
+&kp A       &kp S         &kp D         &kp F                        &kp G        &kp LS(LG(S))                      &coronSemicoron  &kp H        &kp J  &kp K      &kp L    &kp SQT
+&kp Z       &kp X         &kp C         &kp V                        &kp B        &kp LEFT_SHIFT                     &minusequal      &kp N        &kp M  &kp COMMA  &kp DOT  &backslashUnderscore
+&kp ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_to_layer_0 6 INT_HENKAN  &lt 2 SPACE  &lt_to_layer_0 3 INT_MUHENKAN      &kp BACKSPACE    &lt 1 ENTER                             &kp DEL
             >;
 
             sensor-bindings = <&inc_dec_kp PAGE_DOWN PG_UP>;
