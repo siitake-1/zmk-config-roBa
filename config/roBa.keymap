@@ -95,7 +95,14 @@
         rot_kp: sensor_rotate_kp {
             compatible = "zmk,behavior-sensor-rotate-var";
             #sensor-binding-cells = <2>;
-            bindings = <&kp>, <&kp>;
+            bindings = <&kp> <&kp>;
+        };
+
+        encoder_msc_down_up: sensor_rotate_kp {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <2>;
+            bindings = <&msc SCRL_DOWN>, <&msc SCRL_UP>;
+            tap-ms = <20>;
         };
 
         lt_to_layer_0: lt_to_layer_0 {
@@ -138,7 +145,7 @@
 &kp ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_to_layer_0 6 INT_HENKAN  &lt 2 SPACE  &lt_to_layer_0 3 INT_MUHENKAN      &kp BACKSPACE  &lt 1 ENTER                             &kp DEL
             >;
 
-            sensor-bindings = <&rot_kp PAGE_DOWN PG_UP>;
+            sensor-bindings = <&encoder_msc_down_up>;
         };
 
         FUNCTION {
@@ -158,7 +165,7 @@
 &trans        &trans        &trans        &trans        &trans        &trans                       &trans       &trans                                                                       &trans
             >;
 
-            sensor-bindings = <&rot_kp PAGE_DOWN PG_UP>;
+            sensor-bindings = <&encoder_msc_down_up>;
         };
 
         ARROW {
