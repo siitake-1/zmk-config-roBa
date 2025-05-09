@@ -98,9 +98,9 @@
             bindings = <&kp>, <&kp>;
         };
 
-        encoder_msc_down_up: sensor_rotate_kp_2 {
+        encoder_msc_down_up: encoder_msc_down_up {
             compatible = "zmk,behavior-sensor-rotate";
-            #sensor-binding-cells = <2>;
+            #sensor-binding-cells = <0>;
             bindings = <&msc SCRL_DOWN>, <&msc SCRL_UP>;
             tap-ms = <20>;
         };
