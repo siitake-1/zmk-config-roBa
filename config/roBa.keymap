@@ -1,15 +1,38 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
+
+#define ZMK_POINTING_DEFAULT_MOVE_VAL 800
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 20
 #include <dt-bindings/zmk/pointing.h>
+#include <input/processors.dtsi>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
 
 #define MOUSE 4
-#define SCROLL 5
+#define SNIPE 5
 #define NUM 6
 
 &mt {
     flavor = "balanced";
     quick-tap-ms = <0>;
+};
+
+&mmv_input_listener {
+    precision {
+        layers = <SNIPE>;
+        input-processors = <&zip_xy_scaler 1 4>;
+    };
+};
+
+&msc_input_listener {
+    normal_sc {
+        layers = <default_layer>;
+        input-processors = <&zip_wheel_scaler 1 2>, <&zip_hwheel_scaler 1 2>;
+    };
+    precision {
+        layers = <NUM>;
+        input-processors = <&zip_wheel_scaler 1 4>, <&zip_hwheel_scaler 1 4>;
+    };
 };
 
 / {
@@ -83,6 +106,12 @@
             #binding-cells = <0>;
             mods = <(MOD_LSFT|MOD_RSFT)>;
         };
+
+　　　　rot_kp: sensor_rotate_kp {
+            compatible = "zmk,behavior-sensor-rotate-var";
+            #sensor-binding-cells = <2>;
+            bindings = <&kp>, <&kp>;
+        };
     };
 
     keymap {
@@ -96,7 +125,7 @@
 &kp ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_to_layer_0 6 INT_HENKAN  &lt 2 SPACE  &lt_to_layer_0 3 INT_MUHENKAN      &kp BACKSPACE  &lt 1 ENTER                             &kp DEL
             >;
 
-            sensor-bindings = <&inc_dec_kp PAGE_DOWN PG_UP>;
+            sensor-bindings = <&rot_kp PAGE_DOWN PG_UP>;
         };
 
         FUNCTION {
@@ -115,6 +144,8 @@
 &kp N0        &kp N9        &kp PERIOD    &kp EQUAL     &kp FSLH      &trans                       &trans       &kp LEFT_BRACE        &kp RIGHT_BRACE        &kp PERCENT      &kp TILDE      &trans
 &trans        &trans        &trans        &trans        &trans        &trans                       &trans       &trans                                                                       &trans
             >;
+
+            sensor-bindings = <&rot_kp PAGE_DOWN PG_UP>;
         };
 
         ARROW {
@@ -125,7 +156,7 @@
 &trans          &trans                  &trans          &trans                   &trans   &trans      &trans  &trans                          &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp LC(PAGE_DOWN) LC(PAGE_UP)>;
+            sensor-bindings = <&rot_kp LC(PAGE_DOWN) LC(PAGE_UP)>;
         };
 
         MOUSE {
@@ -137,7 +168,7 @@
             >;
         };
 
-        SCROLL {
+        SNIPE {
             bindings = <
 &trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
