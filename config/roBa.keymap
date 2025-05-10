@@ -9,9 +9,15 @@
 #include <input/processors.dtsi>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
+#define DEFAULT 0
+#define FUNCTION 1
+#define NUM 2
+#define ARROW 3
 #define MOUSE 4
 #define SNIPE 5
-#define NUM 2
+#define SCROLL 6
+#define BLUETOOTH 7
+
 
 &mt {
     flavor = "balanced";
@@ -161,12 +167,12 @@
     keymap {
         compatible = "zmk,keymap";
 
-        default_layer {
+        DEFAULT {
             bindings = <
-&kp Q             &kp W         &kp E         &kp R                 &kp T                                                             &kp Y        &kp U  &kp I      &kp O    &lt 6 P
-&kp A             &kp S         &kp D         &kp F                 &kp G                    &kp LS(LG(S))            &kp SEMICOLON   &kp H        &kp J  &kp K      &kp L    &lt 5 SQT
+&kp Q             &kp W         &kp E         &kp R                 &kp T                                                             &kp Y        &kp U  &kp I      &kp O    &lt SCROLL P
+&kp A             &kp S         &kp D         &kp F                 &kp G                    &kp LS(LG(S))            &kp SEMICOLON   &kp H        &kp J  &kp K      &kp L    &lt SNIPE SQT
 &kp Z             &kp X         &kp C         &kp V                 &kp B                    &kp LEFT_SHIFT           &minusequal     &kp N        &kp M  &kp COMMA  &kp DOT  &backslashUnderscore
-&mt LCTRL ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_henkanMuhenkan 7 0 &lt_to_layer_0 2 LCTRL  &lt_to_layer_0 3 SPACE   &kp BACKSPACE   &lt 1 ENTER                             &kp DEL
+&mt LCTRL ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_henkanMuhenkan BLUETOOTH 0 &lt_to_layer_0 NUM LCTRL  &lt_to_layer_0 ARROW SPACE   &kp BACKSPACE   &lt FUNCTON ENTER                             &kp DEL
             >;
 
             sensor-bindings = <&encoder_msc_down_up>;
@@ -223,7 +229,7 @@
             >;
         };
 
-        layer_6 {
+        SCROLL {
             bindings = <
 &trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans 
@@ -232,7 +238,7 @@
             >;
         };
 
-        layer_7 {
+        BLUETOOTH {
             bindings = <
 &trans  &trans  &trans  &trans  &trans                           &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
 &trans  &trans  &trans  &trans  &trans  &trans      &trans       &trans        &trans        &trans        &trans        &trans
