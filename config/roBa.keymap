@@ -37,7 +37,20 @@
     };
 };
 
-
+&msc_input_listener {
+    normal_sc {
+        layers = <0>;
+        input-processors = <&zip_wheel_scaler 1 1>;
+    };
+    precision {
+        layers = <1>;
+        input-processors = <&zip_wheel_scaler 1 2>;
+    };
+    swing {
+        layers = <2>;
+        input-processors = <&zip_wheel_scaler 2 1>;
+    };
+};
 
 / {
     combos {
@@ -153,7 +166,7 @@
 &kp Q             &kp W         &kp E         &kp R                 &kp T                                                             &kp Y        &kp U  &kp I      &kp O    &lt 6 P
 &kp A             &kp S         &kp D         &kp F                 &kp G                    &kp LS(LG(S))            &kp SEMICOLON   &kp H        &kp J  &kp K      &kp L    &lt 5 SQT
 &kp Z             &kp X         &kp C         &kp V                 &kp B                    &kp LEFT_SHIFT           &minusequal     &kp N        &kp M  &kp COMMA  &kp DOT  &backslashUnderscore
-&mt LCTRL ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_henkanMuhenkan 6 0 &lt_to_layer_0 2 LCTRL  &lt_to_layer_0 3 SPACE   &kp BACKSPACE   &lt 1 ENTER                             &kp DEL
+&mt LCTRL ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_henkanMuhenkan 7 0 &lt_to_layer_0 2 LCTRL  &lt_to_layer_0 3 SPACE   &kp BACKSPACE   &lt 1 ENTER                             &kp DEL
             >;
 
             sensor-bindings = <&encoder_msc_down_up>;
@@ -166,6 +179,8 @@
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &kp F11  &kp F12  &kp F13  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                             &trans
             >;
+
+            sensor-bindings = <&encoder_msc_down_up>;
         };
 
         NUM {
@@ -176,7 +191,7 @@
 &trans        &trans        &trans        &trans        &trans        &trans                       &trans       &trans                                                                       &trans
             >;
 
-            sensor-bindings = <&rot_kp PAGE_DOWN PAGE_UP>;
+            sensor-bindings = <&encoder_msc_down_up>;
         };
 
         ARROW {
