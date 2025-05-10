@@ -26,7 +26,7 @@
 
 &mmv_input_listener {
     precision {
-        layers = <SNIPE>;
+        layers = <SNIPE5>;
         input-processors = <&zip_xy_scaler 1 4>;
     };
 };
