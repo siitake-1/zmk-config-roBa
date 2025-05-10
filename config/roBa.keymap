@@ -145,7 +145,7 @@
         henkanMuhenkan: henkanMuhenkan {
             compatible = "zmk,behavior-mod-morph";
             label = "Henkan";
-            bindings = <&kp INT4>, <&kp INT5>;
+            bindings = <&to_layer_0 INT4>, <&to_layer_0 INT5>;
 
             #binding-cells = <0>;
             mods = <(MOD_LSFT|MOD_RSFT)>;
@@ -154,7 +154,7 @@
         lt_henkanMuhenkan: lt_henkanMuhenkan {
             compatible = "zmk,behavior-hold-tap";
             label = "lt_henkanMuhenkan";
-            bindings = <&lt_to_layer_0>, <&henkanMuhenkan>;
+            bindings = <&mo>, <&henkanMuhenkan>;
 
             #binding-cells = <2>;
             tapping-term-ms = <200>;
