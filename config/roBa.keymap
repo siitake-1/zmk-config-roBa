@@ -172,7 +172,7 @@
 &kp Q             &kp W         &kp E         &kp R                 &kp T                                                             &kp Y        &kp U  &kp I      &kp O    &lt SCROLL6 P
 &kp A             &kp S         &kp D         &kp F                 &kp G                    &kp LS(LG(S))            &kp SEMICOLON   &kp H        &kp J  &kp K      &kp L    &lt SNIPE5 SQT
 &kp Z             &kp X         &kp C         &kp V                 &kp B                    &kp LEFT_SHIFT           &minusequal     &kp N        &kp M  &kp COMMA  &kp DOT  &backslashUnderscore
-&mt LCTRL ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_henkanMuhenkan BLUETOOTH7 0 &lt_to_layer_0 NUMBER2 LCTRL  &lt_to_layer_0 ARROW3 SPACE   &kp BACKSPACE   &lt FUNCTON ENTER                             &kp DEL
+&mt LCTRL ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_henkanMuhenkan BLUETOOTH7 0 &lt_to_layer_0 NUMBER2 LCTRL  &lt_to_layer_0 ARROW3 SPACE   &kp BACKSPACE   &lt FUNCTON1 ENTER                             &kp DEL
             >;
 
             sensor-bindings = <&encoder_msc_down_up>;
