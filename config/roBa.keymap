@@ -67,7 +67,7 @@
         };
 
         shift_tab {
-            sbindings = <&kp LS(TAB)>;
+            bindings = <&kp LS(TAB)>;
             key-positions = <13 11>;
         };
 
