@@ -9,14 +9,14 @@
 #include <input/processors.dtsi>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
-#define DEFAULT 0
-#define FUNCTION 1
-#define NUM 2
-#define ARROW 3
-#define MOUSE 4
-#define SNIPE 5
-#define SCROLL 6
-#define BLUETOOTH 7
+#define DEFAULT0 0
+#define FUNCTION1 1
+#define NUMBER2 2
+#define ARROW3 3
+#define MOUSE4 4
+#define SNIPE5 5
+#define SCROLL6 6
+#define BLUETOOTH7 7
 
 
 &mt {
@@ -167,18 +167,18 @@
     keymap {
         compatible = "zmk,keymap";
 
-        DEFAULT {
+        DEFAULT0 {
             bindings = <
-&kp Q             &kp W         &kp E         &kp R                 &kp T                                                             &kp Y        &kp U  &kp I      &kp O    &lt SCROLL P
-&kp A             &kp S         &kp D         &kp F                 &kp G                    &kp LS(LG(S))            &kp SEMICOLON   &kp H        &kp J  &kp K      &kp L    &lt SNIPE SQT
+&kp Q             &kp W         &kp E         &kp R                 &kp T                                                             &kp Y        &kp U  &kp I      &kp O    &lt SCROLL6 P
+&kp A             &kp S         &kp D         &kp F                 &kp G                    &kp LS(LG(S))            &kp SEMICOLON   &kp H        &kp J  &kp K      &kp L    &lt SNIPE5 SQT
 &kp Z             &kp X         &kp C         &kp V                 &kp B                    &kp LEFT_SHIFT           &minusequal     &kp N        &kp M  &kp COMMA  &kp DOT  &backslashUnderscore
-&mt LCTRL ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_henkanMuhenkan BLUETOOTH 0 &lt_to_layer_0 NUM LCTRL  &lt_to_layer_0 ARROW SPACE   &kp BACKSPACE   &lt FUNCTON ENTER                             &kp DEL
+&mt LCTRL ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_henkanMuhenkan BLUETOOTH7 0 &lt_to_layer_0 NUMBER2 LCTRL  &lt_to_layer_0 ARROW3 SPACE   &kp BACKSPACE   &lt FUNCTON ENTER                             &kp DEL
             >;
 
             sensor-bindings = <&encoder_msc_down_up>;
         };
 
-        FUNCTION {
+        FUNCTION1 {
             bindings = <
 &trans  &trans  &trans  &trans  &trans                      &kp F1   &kp F2   &kp F3   &kp F4  &kp F5
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &kp F6   &kp F7   &kp F8   &kp F9  &kp F10
@@ -189,7 +189,7 @@
             sensor-bindings = <&encoder_msc_down_up>;
         };
 
-        NUM {
+        NUMBER2 {
             bindings = <
 &kp NUMBER_4  &kp NUMBER_3  &kp NUMBER_2  &kp NUMBER_1  &kp NUMBER_0                                            &kp LEFT_PARENTHESIS  &kp RIGHT_PARENTHESIS  &kp EXCLAMATION  &kp AMPERSAND  &kp PIPE
 &kp NUMBER_9  &kp NUMBER_8  &kp NUMBER_7  &kp NUMBER_6  &kp NUMBER_5  &kp LC(LA(KP_NUMBER_0))      &kp AT_SIGN  &kp LEFT_BRACKET      &kp RIGHT_BRACKET      &kp HASH         &kp DOLLAR     &kp CARET
@@ -200,7 +200,7 @@
             sensor-bindings = <&encoder_msc_down_up>;
         };
 
-        ARROW {
+        ARROW3 {
             bindings = <
 &kp ESCAPE      &kp LC(LS(TAB))         &kp UP_ARROW    &kp LC(TAB)              &trans                       &trans  &trans  &trans  &trans  &trans
 &kp HOME        &kp LEFT_ARROW          &kp DOWN_ARROW  &kp RIGHT_ARROW          &kp END  &trans      &trans  &trans  &trans  &trans  &trans  &trans
@@ -211,7 +211,7 @@
             sensor-bindings = <&rot_kp LC(PAGE_DOWN) LC(PAGE_UP)>;
         };
 
-        MOUSE {
+        MOUSE4 {
             bindings = <
 &trans  &trans  &trans  &trans  &trans                      &trans  &trans    &trans    &trans    &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB1  &mkp MB3  &mkp MB2  &trans
@@ -220,7 +220,7 @@
             >;
         };
 
-        SNIPE {
+        SNIPE5 {
             bindings = <
 &trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
@@ -229,7 +229,7 @@
             >;
         };
 
-        SCROLL {
+        SCROLL6 {
             bindings = <
 &trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans 
@@ -238,7 +238,7 @@
             >;
         };
 
-        BLUETOOTH {
+        BLUETOOTH7 {
             bindings = <
 &trans  &trans  &trans  &trans  &trans                           &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
 &trans  &trans  &trans  &trans  &trans  &trans      &trans       &trans        &trans        &trans        &trans        &trans
