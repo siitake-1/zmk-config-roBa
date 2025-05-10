@@ -10,7 +10,7 @@
 
 #define MOUSE 4
 #define SNIPE 5
-#define NUM 6
+#define NUM 2
 
 &mt {
     flavor = "balanced";
@@ -38,7 +38,7 @@
 
 &msc_input_listener {
     normal_sc {
-        layers = <1>;
+        layers = <0>;
         input-processors = <&zip_wheel_scaler 1 2>;
     };
     precision {
@@ -51,13 +51,23 @@
     combos {
         compatible = "zmk,combos";
 
+        MO_5 {
+            bindings = <&mo 5>;
+            key-positions = <6 7>;  
+        };
+
+        MO_6 {
+            bindings = <&mo 6>;
+            key-positions = <7 8>;  
+        };
+
         tab {
             bindings = <&kp TAB>;
             key-positions = <12 13>;
         };
 
         shift_tab {
-            bindings = <&kp LS(TAB)>;
+            sbindings = <&kp LS(TAB)>;
             key-positions = <13 11>;
         };
 
@@ -131,6 +141,24 @@
             #binding-cells = <0>;
             mods = <(MOD_LSFT|MOD_RSFT)>;
         };
+
+        henkanMuhenkan: henkanMuhenkan {
+            compatible = "zmk,behavior-mod-morph";
+            label = "Henkan";
+            bindings = <&kp INT4>, <&kp INT5>;
+
+            #binding-cells = <0>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        lt_henkanMuhenkan: lt_henkanMuhenkan {
+            compatible = "zmk,behavior-hold-tap";
+            label = "lt_henkanMuhenkan";
+            bindings = <&lt_to_layer_0>, <&henkanMuhenkan>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <200>;
+        };
      };
 
 
@@ -139,10 +167,10 @@
 
         default_layer {
             bindings = <
-&kp Q       &kp W         &kp E         &kp R                        &kp T                                                          &kp Y        &kp U  &lt 5 I    &kp O    &kp P
-&kp A       &kp S         &kp D         &kp F                        &kp G        &kp LS(LG(S))                      &kp SEMICOLON  &kp H        &kp J  &kp K      &kp L    &kp SQT
-&kp Z       &kp X         &kp C         &kp V                        &kp B        &kp LEFT_SHIFT                     &minusequal    &kp N        &kp M  &kp COMMA  &kp DOT  &backslashUnderscore
-&kp ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_to_layer_0 6 INT_HENKAN  &lt 2 SPACE  &lt_to_layer_0 3 INT_MUHENKAN      &kp BACKSPACE  &lt 1 ENTER                             &kp DEL
+&kp Q       &kp W         &kp E         &kp R                        &kp T                                                          &kp Y        &kp U  &kp I      &kp O    &kp P
+&kp A       &kp S         &kp D         &kp F                        &kp G        &kp LS(LG(S))                     &kp SEMICOLON   &kp H        &kp J  &kp K      &kp L    &kp SQT
+&kp Z       &kp X         &kp C         &kp V                        &kp B        &kp LEFT_SHIFT                    &minusequal     &kp N        &kp M  &kp COMMA  &kp DOT  &backslashUnderscore
+&kp ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_henkanMuhenkan 6 0  &lt_to_layer_0 2 LCTRL  &lt_to_layer_0 3 SPACE      &kp BACKSPACE   &lt 1 ENTER                             &kp DEL
             >;
 
             sensor-bindings = <&encoder_msc_down_up>;
@@ -160,8 +188,8 @@
         NUM {
             bindings = <
 &kp NUMBER_4  &kp NUMBER_3  &kp NUMBER_2  &kp NUMBER_1  &kp PLUS                                                &kp LEFT_PARENTHESIS  &kp RIGHT_PARENTHESIS  &kp EXCLAMATION  &kp AMPERSAND  &kp PIPE
-&kp N8        &kp N7        &kp NUMBER_6  &kp N5        &kp ASTERISK  &kp LC(LA(KP_NUMBER_0))      &kp AT_SIGN  &kp LEFT_BRACKET      &kp RIGHT_BRACKET      &kp HASH         &kp DOLLAR     &kp CARET
-&kp N0        &kp N9        &kp PERIOD    &kp EQUAL     &kp FSLH      &trans                       &trans       &kp LEFT_BRACE        &kp RIGHT_BRACE        &kp PERCENT      &kp TILDE      &trans
+&kp NUMBER_8  &kp NUMBER_7  &kp NUMBER_6  &kp NUMBER_5  &kp ASTERISK  &kp LC(LA(KP_NUMBER_0))      &kp AT_SIGN  &kp LEFT_BRACKET      &kp RIGHT_BRACKET      &kp HASH         &kp DOLLAR     &kp CARET
+&kp NUMBER_0  &kp NUMBER_9  &kp PERIOD    &kp EQUAL     &kp FSLH      &trans                       &trans       &kp LEFT_BRACE        &kp RIGHT_BRACE        &kp PERCENT      &kp TILDE      &trans
 &trans        &trans        &trans        &trans        &trans        &trans                       &trans       &trans                                                                       &trans
             >;
 
@@ -190,14 +218,23 @@
 
         SNIPE {
             bindings = <
-&trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                          &trans
+&trans  &trans  &trans  &trans  &trans                      &trans  &trans    &trans    &trans   &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB1  &mkp MB3  &mkp MB2 &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans    &trans    &trans   &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                               &trans
             >;
         };
 
         layer_6 {
+            bindings = <
+&trans  &trans  &trans  &trans  &trans                      &trans  &trans    &trans    &trans    &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB1  &mkp MB3  &mkp MB2  &trans  
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans    &trans    &trans    &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                &trans
+            >;
+        };
+
+        layer_7 {
             bindings = <
 &trans  &trans  &trans  &trans  &trans                           &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
 &trans  &trans  &trans  &trans  &trans  &trans      &trans       &trans        &trans        &trans        &trans        &trans
