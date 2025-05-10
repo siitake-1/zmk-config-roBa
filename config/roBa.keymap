@@ -137,7 +137,7 @@
         lt_henkanMuhenkan: lt_henkanMuhenkan {
             compatible = "zmk,behavior-hold-tap";
             label = "lt_henkanMuhenkan";
-            bindings = <&mo>, <&henkanMuhenkan>;
+            bindings = <&lt>, <&henkanMuhenkan>;
 
             #binding-cells = <2>;
             tapping-term-ms = <200>;
@@ -150,8 +150,8 @@
 
         default_layer {
             bindings = <
-&kp Q             &kp W         &kp E         &kp R                 &kp T                                                            &kp Y        &kp U  &kp I      &kp O    &lt 5 P
-&kp A             &kp S         &kp D         &kp F                 &kp G                    &kp LS(LG(S))            &kp SEMICOLON   &kp H        &kp J  &kp K      &kp L    &lt 6 SQT
+&kp Q             &kp W         &kp E         &kp R                 &kp T                                                             &kp Y        &kp U  &kp I      &kp O    &lt 6 P
+&kp A             &kp S         &kp D         &kp F                 &kp G                    &kp LS(LG(S))            &kp SEMICOLON   &kp H        &kp J  &kp K      &kp L    &lt 5 SQT
 &kp Z             &kp X         &kp C         &kp V                 &kp B                    &kp LEFT_SHIFT           &minusequal     &kp N        &kp M  &kp COMMA  &kp DOT  &backslashUnderscore
 &mt LCTRL ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_henkanMuhenkan 6 0 &lt_to_layer_0 2 LCTRL  &lt_to_layer_0 3 SPACE   &kp BACKSPACE   &lt 1 ENTER                             &kp DEL
             >;
