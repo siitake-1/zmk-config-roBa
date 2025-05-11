@@ -100,10 +100,18 @@
             mods = <(MOD_LCTL|MOD_RCTL)>;
        };
 
+       scrl_c_up: scrl_ctrl_up {
+            compatible = "zmk,behavior-mod-morph";
+            label = "scrl_ctrl_up";
+            bindings = <&kp LA(TAB)>, <&kp LC(LG(RIGHT_ARROW))>;
+
+            #binding-cells = <0>;
+            mods = <(MOD_LCTL|MOD_RCTL)>;
+
        scrl_c_down: scrl_ctrl_down {
             compatible = "zmk,behavior-mod-morph";
             label = "scrl_ctrl_down";
-            bindings = <&kp LA(TAB)>, <&kp LC(LG(RIGHT_ARROW)>;
+            bindings = <&kp LA(LS(TAB))>, <&kp LC(LG(LEFT_ARROW))>;
 
             #binding-cells = <0>;
             mods = <(MOD_LCTL|MOD_RCTL)>;
