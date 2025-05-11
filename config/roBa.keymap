@@ -68,7 +68,7 @@
         scrl_s_up: scrl_shift_up {
             compatible = "zmk,behavior-mod-morph";
             label = "scrl_shift_up";
-            bindings = <&msc SCRL_UP>, <&kp C_VOL_UP>;
+            bindings = <&msc SCRL_UP>, <&kp K_VOLUME_UP>;
 
             #binding-cells = <0>;
             mods = <(MOD_LCTL|MOD_RCTL)>;
@@ -77,7 +77,7 @@
         scrl_s_down: scrl_shift_down {
             compatible = "zmk,behavior-mod-morph";
             label = "scrl_shift_down";
-            bindings = <&msc SCRL_DOWN>, <&kp C_VOL_DN>;
+            bindings = <&msc SCRL_DOWN>, <&kp K_VOLUME_DOWN>;
 
             #binding-cells = <0>;
             mods = <(MOD_LCTL|MOD_RCTL)>;
@@ -199,10 +199,10 @@
 
         FUNCTION1 {
             bindings = <
-&trans  &kp PIPE   &kp DOLLAR     &kp AT_SIGN      &trans                      &kp F1   &kp F2   &kp F3   &kp F4  &kp F5
-&trans  &kp TILDE  &kp AMPERSAND  &kp EXCLAMATION  &trans  &trans      &trans  &kp F6   &kp F7   &kp F8   &kp F9  &kp F10
-&trans  &kp CARET  &kp PERCENT    &kp HASH         &trans  &trans      &trans  &kp F11  &kp F12  &kp F13  &trans  &trans
-&trans  &trans     &trans         &trans           &trans  &trans      &trans  &trans                             &trans
+&trans  &kp PIPE   &kp DOLLAR     &kp AT_SIGN      &trans                          &kp F1   &kp F2   &kp F3   &kp F4  &kp F5
+&trans  &kp TILDE  &kp AMPERSAND  &kp EXCLAMATION  &trans  &kp K_MUTE      &trans  &kp F6   &kp F7   &kp F8   &kp F9  &kp F10
+&trans  &kp CARET  &kp PERCENT    &kp HASH         &trans  &trans          &trans  &kp F11  &kp F12  &kp F13  &trans  &trans
+&trans  &trans     &trans         &trans           &trans  &trans          &trans  &trans                             &trans
             >;
         };
 
