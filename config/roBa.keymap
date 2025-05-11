@@ -68,19 +68,19 @@
         scrl_s_up: scrl_shift_up {
             compatible = "zmk,behavior-mod-morph";
             label = "scrl_shift_up";
-            bindings = <&msc SCRL_UP>, <&kp K_VOLUME_UP>;
+            bindings = <&msc SCRL_UP>, <&kp C_VOLUME_UP>;
 
             #binding-cells = <0>;
-            mods = <(MOD_LCTL|MOD_RCTL)>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
         };
 
         scrl_s_down: scrl_shift_down {
             compatible = "zmk,behavior-mod-morph";
             label = "scrl_shift_down";
-            bindings = <&msc SCRL_DOWN>, <&kp K_VOLUME_DOWN>;
+            bindings = <&msc SCRL_DOWN>, <&kp C_VOLUME_DOWN>;
 
             #binding-cells = <0>;
-            mods = <(MOD_LCTL|MOD_RCTL)>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
         };
 
         scrl_c_up: scrl_ctrl_up {
