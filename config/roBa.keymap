@@ -85,7 +85,7 @@
        scrl_s_up: scrl_shift_up {
             compatible = "zmk,behavior-mod-morph";
             label = "scrl_shift_up";
-            bindings = <&msc SCRL_UP>, <&kp LS(K_VOL_UP)>;
+            bindings = <&msc SCRL_UP>, <&kp C_VOL_UP>;
 
             #binding-cells = <0>;
             mods = <(MOD_LCTL|MOD_RCTL)>;
@@ -94,7 +94,7 @@
        scrl_s_down: scrl_shift_down {
             compatible = "zmk,behavior-mod-morph";
             label = "scrl_shift_down";
-            bindings = <&msc SCRL_DOWN>, <&kp LS(K_VOL_DN)>;
+            bindings = <&msc SCRL_DOWN>, <&kp C_VOL_DN>;
 
             #binding-cells = <0>;
             mods = <(MOD_LCTL|MOD_RCTL)>;
