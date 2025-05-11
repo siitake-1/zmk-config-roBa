@@ -32,33 +32,6 @@
 };
 
 / {
-    input_processors {
-        zip_wheel_scaler: zip_wheel_scaler {
-            compatible = "zmk,input-processor-scaler";
-            #input-processor-cells = <2>;
-            type = <INPUT_EV_REL>;
-            codes = <INPUT_REL_WHEEL>;
-            track-remainders;
-        };
-    };
-};
-
-&msc_input_listener {
-    normal_sc {
-        layers = <0>;
-        input-processors = <&zip_scroll_scaler 1 1>;
-    };
-    precision {
-        layers = <1>;
-        input-processors = <&zip_scroll_scaler 1 2>;
-    };
-    swing {
-        layers = <2>;
-        input-processors = <&zip_scroll_scaler 2 1>;
-    };
-};
-
-/ {
     combos {
         compatible = "zmk,combos";
 
@@ -109,12 +82,65 @@
             bindings = <&kp>, <&kp>;
         };
 
-        encoder_msc_down_up: encoder_msc_down_up {
+       scrl_s_up: scrl_shift_up {
+            compatible = "zmk,behavior-mod-morph";
+            label = "scrl_shift_up";
+            bindings = <&msc SCRL_UP>, <&kp LS(C_VOL_UP)>;
+
+            #binding-cells = <0>;
+            mods = <(MOD_LCTL|MOD_RCTL)>;
+       };
+
+       scrl_s_down: scrl_shift_down {
+            compatible = "zmk,behavior-mod-morph";
+            label = "scrl_shift_down";
+            bindings = <&msc SCRL_DOWN>, <&kp LS(C_VOL_DOWN)>;
+
+            #binding-cells = <0>;
+            mods = <(MOD_LCTL|MOD_RCTL)>;
+       };
+
+       scrl_c_down: scrl_ctrl_down {
+            compatible = "zmk,behavior-mod-morph";
+            label = "scrl_ctrl_down";
+            bindings = <&kp LA(TAB)>, <&kp LC(LG(RIGHT_ARROW)>;
+
+            #binding-cells = <0>;
+            mods = <(MOD_LCTL|MOD_RCTL)>;
+       };
+
+       scrl_c_a_up: scrl_ctrl_alt_up {
+            compatible = "zmk,behavior-mod-morph";
+            label = "scrl_ctrl_alt_up";
+            bindings = <&scrl_s_up>, <&scrl_c_up>;
+
+            #binding-cells = <0>;
+            mods = <MOD_LALT|MOD_RALT|MOD_LCTL|MOD_RCTL)>;
+       };
+
+       scrl_c_a_down: scrl_ctrl_alt_down {
+            compatible = "zmk,behavior-mod-morph";
+            label = "scrl_ctrl_alt_down";
+            bindings = <&scrl_s_down>, <&scrl_c_down>;
+
+            #binding-cells = <0>;
+            mods = <MOD_LALT|MOD_RALT|MOD_LCTL|MOD_RCTL)>;
+       };
+
+        encoder_msc_down_up_0: encoder_msc_down_up_0 {
             compatible = "zmk,behavior-sensor-rotate";
             label = "ENCODER_MSC_DOWN_UP";
             #sensor-binding-cells = <0>;
-            bindings = <&msc SCRL_DOWN>, <&msc SCRL_UP>;
+            bindings = <&scrl_c_a_down>, <&scrl_c_a_up>;
             tap-ms = <20>;
+        };
+
+        encoder_msc_down_up_1: encoder_msc_down_up_1 {
+            compatible = "zmk,behavior-sensor-rotate";
+            label = "ENCODER_MSC_DOWN_UP";
+            #sensor-binding-cells = <0>;
+            bindings = <&scrl_c_a_down>, <&scrl_c_a_up>;
+            tap-ms = <10>;
         };
 
         lt_to_layer_0: lt_to_layer_0 {
@@ -175,7 +201,7 @@
 &mt LCTRL ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_henkanMuhenkan BLUETOOTH7 0  &lt_to_layer_0 NUMBER2 SPACE &lt_to_layer_0 ARROW3 ESCAPE   &kp BACKSPACE   &lt FUNCTION1 ENTER  &kp DEL
             >;
 
-            sensor-bindings = <&encoder_msc_down_up>;
+            sensor-bindings = <&encoder_msc_down_up_0>;
         };
 
         FUNCTION1 {
@@ -186,7 +212,6 @@
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                             &trans
             >;
 
-            sensor-bindings = <&encoder_msc_down_up>;
         };
 
         NUMBER2 {
@@ -197,7 +222,7 @@
 &trans        &trans        &trans        &trans        &trans        &trans                       &trans       &trans                                                                       &trans
             >;
 
-            sensor-bindings = <&encoder_msc_down_up>;
+            sensor-bindings = <&encoder_msc_down_up_1>;
         };
 
         ARROW3 {
