@@ -39,6 +39,7 @@
         track-remainders;
     };
   };
+};
 
 &msc_input_listener {
   warp {
