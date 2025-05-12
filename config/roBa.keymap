@@ -30,26 +30,6 @@
 };
 
 / {
-    input_processors {
-      encoder_wheel_scaler: encoder_wheel_scaler {
-        comaptible = "zmk,input-processor-scaler";
-        #input-processo-cells = <2>;
-        tyhpe = <INPUT_EV_REL>;
-        codes = <INPUT_REL_WHEEL>;
-        track-remainders;
-    };
-  };
-};
-
-&msc_input_listener {
-  warp {
-    layers = <NUMBER2>;
-    input-processors = <&zip_scroll_scaler 1 4>;
-  };
-};
-
-
-/ {
     combos {
         compatible = "zmk,combos";
 
@@ -148,13 +128,25 @@
             tap-ms = <20>;
         };
 
-        encoder_msc_down_up_1: encoder_msc_down_up_1 {
-            compatible = "zmk,behavior-sensor-rotate-var";
-            label = "ENCODER_MSC_DOW N_UP_1";
-            #sensor-binding-cells = <2>;
-            bindings = <&msc>, <&msc>;
+        fast_pgdn: fast_pgdn {
+          compatible = "zmk,behavior-multi";
+          label = "FAST_PGDN";
+          #binding-cells = <0>;
+          bindings = <&msc SCRL_DOWN &msc SCRL_DOWN>;
+       };
 
-            tap-ms = <10>;
+       fast_pgup: fast_pgup {
+         compatible = "zmk,behavior-multi";
+         label = "FAST_PGUP";
+         #binding-cells = <0>;
+         bindings = <&msc SCRL_UP &msc SCRL_UP>;
+       };
+
+        encoder_msc_down_up_1: encoder_msc_down_up_1 {
+            compatible = "zmk,behavior-sensor-rotate";
+            label = "ENCODER_MSC_DOW N_UP_1";
+            #sensor-binding-cells = <0>;
+            bindings = <&fast_pgdn>, <&fast_pgup>;
         };
 
         lt_to_layer_0: lt_to_layer_0 {
@@ -234,7 +226,7 @@
 &trans        &trans        &trans        &trans        &trans        &trans                       &trans     &trans                                                                         &trans
             >;
 
-            sensor-bindings = <&encoder_msc_down_up_1 SCRL_DOWN SCRL_UP>;
+            sensor-bindings = <&encoder_msc_down_up_1>;
         };
 
         ARROW3 {
