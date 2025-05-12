@@ -146,9 +146,9 @@
             tapping-term-ms = <200>;
         };
 
-        backslashUnderscore: backslashUnderscore {
+        SlashUnderscore: SlashUnderscore {
             compatible = "zmk,behavior-mod-morph";
-            label = "BACKSLASHUNDERSCORE";
+            label = "SLASHUNDERSCORE";
             bindings = <&kp SLASH>, <&kp UNDERSCORE>;
 
             #binding-cells = <0>;
@@ -190,7 +190,7 @@
             bindings = <
 &kp Q             &kp W         &kp E         &kp R                            &kp T                                                                          &kp Y                           &kp U  &kp I      &kp O    &lt SCROLL6 P
 &kp A             &kp S         &kp D         &kp F                            &kp G                         &kp LS(LG(S))                     &kp SEMICOLON  &kp H                           &kp J  &kp K      &kp L    &lt SNIPE5 SQT
-&kp Z             &kp X         &kp C         &kp V                            &kp B                         &kp LEFT_SHIFT                    &minusequal    &kp N                           &kp M  &kp COMMA  &kp DOT  &backslashUnderscore
+&kp Z             &kp X         &kp C         &kp V                            &kp B                         &kp LEFT_SHIFT                    &minusequal    &kp N                           &kp M  &kp COMMA  &kp DOT  &SlashUnderscore
 &mt LCTRL ESCAPE  &kp LEFT_WIN  &kp LEFT_ALT  &lt_henkanMuhenkan BLUETOOTH7 0  &lt_to_layer_0 NUMBER2 SPACE  &lt_to_layer_0 ARROW3 ESCAPE      &kp BACKSPACE  &lt_to_layer_0 FUNCTION1 ENTER                             &kp DEL
             >;
 
@@ -199,10 +199,10 @@
 
         FUNCTION1 {
             bindings = <
-&trans  &kp PIPE   &kp DOLLAR     &kp AT_SIGN      &trans                          &kp F1   &kp F2   &kp F3   &kp F4  &kp F5
-&trans  &kp TILDE  &kp AMPERSAND  &kp EXCLAMATION  &trans  &kp K_MUTE      &trans  &kp F6   &kp F7   &kp F8   &kp F9  &kp F10
-&trans  &kp CARET  &kp PERCENT    &kp HASH         &trans  &trans          &trans  &kp F11  &kp F12  &kp F13  &trans  &trans
-&trans  &trans     &trans         &trans           &trans  &trans          &trans  &trans                             &trans
+&trans  &kp PIPE   &kp DOLLAR     &kp AT_SIGN      &kp BACKSLASH                          &kp F1   &kp F2   &kp F3   &kp F4  &kp F5
+&trans  &kp TILDE  &kp AMPERSAND  &kp EXCLAMATION  &trans         &kp K_MUTE      &trans  &kp F6   &kp F7   &kp F8   &kp F9  &kp F10
+&trans  &kp CARET  &kp PERCENT    &kp HASH         &trans         &trans          &trans  &kp F11  &kp F12  &kp F13  &trans  &trans
+&trans  &trans     &trans         &trans           &trans         &trans          &trans  &trans                             &trans
             >;
         };
 
