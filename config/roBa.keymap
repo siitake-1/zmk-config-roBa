@@ -30,6 +30,25 @@
 };
 
 / {
+    input_processors {
+      encoder_wheel_scaler: encoder_wheel_scaler {
+        comaptible = "zmk,input-processor-scaler";
+        #input-processo-cells = <2>;
+        tyhpe = <INPUT_EV_REL>;
+        codes = <INPUT_REL_WHEEL>;
+        track-remainders;
+    };
+  };
+
+&msc_input_listener {
+  warp {
+    layers = <NUMBER2>;
+    input-processors = <&encod_wheel_scaler 1 4>;
+  };
+};
+
+
+/ {
     combos {
         compatible = "zmk,combos";
 
@@ -129,10 +148,10 @@
         };
 
         encoder_msc_down_up_1: encoder_msc_down_up_1 {
-            compatible = "zmk,behavior-sensor-rotate";
+            compatible = "zmk,behavior-sensor-rotate-var";
             label = "ENCODER_MSC_DOW N_UP_1";
-            #sensor-binding-cells = <0>;
-            bindings = <&scrl_c_a_down>, <&scrl_c_a_up>;
+            #sensor-binding-cells = <2>;
+            bindings = <&msc>, <&msc>;
 
             tap-ms = <10>;
         };
@@ -214,7 +233,7 @@
 &trans        &trans        &trans        &trans        &trans        &trans                       &trans     &trans                                                                         &trans
             >;
 
-            sensor-bindings = <&encoder_msc_down_up_1>;
+            sensor-bindings = <&encoder_msc_down_up_1 SCRL_DOWN SCRL_UP>;
         };
 
         ARROW3 {
