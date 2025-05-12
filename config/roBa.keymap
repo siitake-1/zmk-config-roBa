@@ -44,7 +44,7 @@
 &msc_input_listener {
   warp {
     layers = <NUMBER2>;
-    input-processors = <&encod_wheel_scaler 1 4>;
+    input-processors = <&encoder_wheel_scaler 1 4>;
   };
 };
 
