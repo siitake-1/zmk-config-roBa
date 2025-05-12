@@ -200,7 +200,7 @@
         FUNCTION1 {
             bindings = <
 &trans  &kp PIPE   &kp DOLLAR     &kp AT_SIGN      &kp BACKSLASH                          &kp F1   &kp F2   &kp F3   &kp F4  &kp F5
-&trans  &kp TILDE  &kp AMPERSAND  &kp EXCLAMATION  &trans         &kp K_MUTE      &trans  &kp F6   &kp F7   &kp F8   &kp F9  &kp F10
+&trans  &kp TILDE  &kp AMPERSAND  &kp EXCLAMATION  &kp QUESTION   &kp K_MUTE      &trans  &kp F6   &kp F7   &kp F8   &kp F9  &kp F10
 &trans  &kp CARET  &kp PERCENT    &kp HASH         &trans         &trans          &trans  &kp F11  &kp F12  &kp F13  &trans  &trans
 &trans  &trans     &trans         &trans           &trans         &trans          &trans  &trans                             &trans
             >;
