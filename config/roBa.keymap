@@ -45,7 +45,7 @@
 
         han_zen {
             bindings = <&kp LA(GRAVE)>;
-            key-positions = <3 2>;
+            key-positions = <2 4>;
         };
     };
 
@@ -55,6 +55,14 @@
             #binding-cells = <1>;
             bindings = <&to 0 &macro_param_1to1 &kp MACRO_PLACEHOLDER>;
             label = "TO_LAYER_0";
+        };
+
+        CTRL_mkp: CTRL_mkp {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_press>, <&kp RCTRL &mkp MB1>, <&macro_release>;
+
+            label = "CTRL_MKP";
         };
     };
 
@@ -129,18 +137,18 @@
         };
 
         fast_pgdn: fast_pgdn {
-          compatible = "zmk,behavior-multi";
-          label = "FAST_PGDN";
-          #binding-cells = <0>;
-          bindings = <&msc SCRL_DOWN &msc SCRL_DOWN>;
-       };
+            compatible = "zmk,behavior-multi";
+            label = "FAST_PGDN";
+            #binding-cells = <0>;
+            bindings = <&msc SCRL_DOWN &msc SCRL_DOWN>;
+        };
 
-       fast_pgup: fast_pgup {
-         compatible = "zmk,behavior-multi";
-         label = "FAST_PGUP";
-         #binding-cells = <0>;
-         bindings = <&msc SCRL_UP &msc SCRL_UP>;
-       };
+        fast_pgup: fast_pgup {
+            compatible = "zmk,behavior-multi";
+            label = "FAST_PGUP";
+            #binding-cells = <0>;
+            bindings = <&msc SCRL_UP &msc SCRL_UP>;
+        };
 
         encoder_msc_down_up_1: encoder_msc_down_up_1 {
             compatible = "zmk,behavior-sensor-rotate";
@@ -242,19 +250,19 @@
 
         MOUSE4 {
             bindings = <
-&trans  &trans  &trans  &trans  &trans                      &trans  &trans    &trans    &trans    &kp LCTRL
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB1  &mkp MB3  &mkp MB2  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans    &trans    &trans    &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                &trans
+&trans  &trans  &trans  &trans  &trans                      &trans  &CTRL_mkp  &trans    &trans    &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB1   &mkp MB3  &mkp MB2  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans     &trans    &trans    &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                 &trans
             >;
         };
 
         SNIPE5 {
             bindings = <
-&trans  &trans  &trans  &trans  &trans                      &trans  &trans    &trans    &trans    &kp LCTRL
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB1  &mkp MB3  &mkp MB2  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans    &trans    &trans    &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                &trans
+&trans  &trans  &trans  &trans  &trans                      &trans  &CTRL_mkp  &trans    &trans    &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB1   &mkp MB3  &mkp MB2  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans     &trans    &trans    &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                 &trans
             >;
         };
 
