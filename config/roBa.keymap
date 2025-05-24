@@ -60,7 +60,9 @@
         CTRL_mkp: CTRL_mkp {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&macro_press>, <&kp RCTRL &mkp MB1>, <&macro_release>;
+            bindings = <&macro_press &kp RCTRL>,
+                       <&mkp MB1>, 
+                       <&macro_release>;
 
             label = "CTRL_MKP";
         };
@@ -152,7 +154,7 @@
 
         encoder_msc_down_up_1: encoder_msc_down_up_1 {
             compatible = "zmk,behavior-sensor-rotate";
-            label = "ENCODER_MSC_DOW N_UP_1";
+            label = "ENCODER_MSC_DOWN_UP_1";
             #sensor-binding-cells = <0>;
             bindings = <&fast_pgdn>, <&fast_pgup>;
         };
