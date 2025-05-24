@@ -61,8 +61,8 @@
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&macro_press &kp RCTRL>,
-                       <&mkp MB1>, 
-                       <&macro_release>;
+                       <&macro_tap &mkp MB1>, 
+                       <&macro_release &kp RCTRL>;
 
             label = "CTRL_MKP";
         };
@@ -136,27 +136,6 @@
             bindings = <&scrl_c_a_down>, <&scrl_c_a_up>;
 
             tap-ms = <20>;
-        };
-
-        fast_pgdn: fast_pgdn {
-            compatible = "zmk,behavior-multi";
-            label = "FAST_PGDN";
-            #binding-cells = <0>;
-            bindings = <&msc SCRL_DOWN &msc SCRL_DOWN>;
-        };
-
-        fast_pgup: fast_pgup {
-            compatible = "zmk,behavior-multi";
-            label = "FAST_PGUP";
-            #binding-cells = <0>;
-            bindings = <&msc SCRL_UP &msc SCRL_UP>;
-        };
-
-        encoder_msc_down_up_1: encoder_msc_down_up_1 {
-            compatible = "zmk,behavior-sensor-rotate";
-            label = "ENCODER_MSC_DOWN_UP_1";
-            #sensor-binding-cells = <0>;
-            bindings = <&fast_pgdn>, <&fast_pgup>;
         };
 
         lt_to_layer_0: lt_to_layer_0 {
@@ -236,7 +215,7 @@
 &trans        &trans        &trans        &trans        &trans        &trans                       &trans     &trans                                                                         &trans
             >;
 
-            sensor-bindings = <&encoder_msc_down_up_1>;
+      
         };
 
         ARROW3 {
