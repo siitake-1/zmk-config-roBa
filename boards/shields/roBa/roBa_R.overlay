@@ -1,5 +1,8 @@
 #include "roBa.dtsi"
 
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input-event-codes.h>
+
 &default_transform {
     col-offset = <6>;
 };
@@ -59,3 +62,76 @@
         irq-gpios = <&gpio0 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
     };
 };
+
+/* i2c control for display */
+&i2c0 { status = "disabled"; };
+
+&pinctrl {
+    i2c1_default: i2c1_default {
+        group1 {
+            psels =
+                <NRF_PSEL(TWIM_SDA, 0, 16)>,
+                <NRF_PSEL(TWIM_SCL, 1, 0)>;
+        };
+    };
+
+    i2c1_sleep: i2c1_sleep {
+        group1 {
+            psels =
+                <NRF_PSEL(TWIM_SDA, 0, 16)>,
+                <NRF_PSEL(TWIM_SCL, 1, 0)>;
+            low-power-enable;
+        };
+    };
+};
+
+/{
+  chosen {
+    zephyr,display = &oled_ssd1306;
+  };
+};
+
+
+&i2c1 {
+  status = "okay";
+
+  zephyr,concat-buf-size = <1024>;
+
+  pinctrl-names = "default", "sleep";
+  pinctrl-0 = <&i2c1_default>;
+  pinctrl-1 = <&i2c1_sleep>;
+
+  oled_ssd1306: ssd1306@3c {
+    compatible = "solomon,ssd1306fb";
+    label = "SSD1306_DISPLAY";
+
+    reg = <0x3c>;
+    width = <128>;
+    height = <32>;
+    multiplex-ratio = <31>;
+    segment-offset = <0>;
+    page-offset = <0>;
+    display-offset = <0>;
+
+    segment-remap;
+    com-invdir;
+    com-sequential;
+
+    prechargep = <0x22>;
+
+  };
+};
+
+/ {
+    chg_central: chg_central {
+        compatible = "gpio-keys";
+        status = "okay";
+
+        r_chg: r_chg {
+          label = "RIGHT_CHG";
+          zephyr,code = <INPUT_KEY_F24>;
+          gpios = <&gpio0 17 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        };
+    };
+};
+

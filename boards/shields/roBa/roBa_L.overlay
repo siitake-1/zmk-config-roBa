@@ -1,5 +1,8 @@
 #include "roBa.dtsi"
 
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input-event-codes.h>
+
 &kscan0 {
         col-gpios
             = <&xiao_d 10 GPIO_ACTIVE_HIGH>
@@ -14,3 +17,33 @@
 &left_encoder {
     status = "okay";
 };
+
+
+/ {
+  zephyr,user {
+    chg-gpios
+      = <&gpio0 17 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+  };
+};
+ 
+/ {
+  chg_keys: chg_keys {
+    compatible = "gpio-keys";
+    status = "okay";
+
+    peri_chg0: peri_chg0 {
+      label = "PERIPHERAL_CHG";
+
+      gpios = <&gpio0 0x11 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+      zephyr,code = <INPUT_KEY_F24>;
+    };
+  };
+};
+
+
+&chg_input_split {
+  device = <&chg_keys>;
+};
+
+
+
