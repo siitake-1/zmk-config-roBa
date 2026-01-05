@@ -9,6 +9,15 @@ config ZMK_SPLIT
 config ZMK_SPLIT_ROLE_CENTRAL
     default y
 
+if ZMK_DISPLAY
+config I2C
+    default y
+config SSD1306
+    default y
+config LVGL
+    default y
+endif # ZMK_DISPLAY
+
 endif
 
 if SHIELD_ROBA_L

@@ -126,3 +126,19 @@
         reg = <0>;
     };
 };
+
+/ {
+  split_inputs {
+    #address-cells = <1>;
+    #size-cells = <0>;
+
+    chg_input_split: chg_input_split@1 {
+      compatible = "zmk,input-split";
+      reg = <1>;
+      status = "okay";
+    };
+  };
+};
+
+
+
