@@ -1,0 +1,55 @@
+menu "roBa OLED / status_screen options"
+
+config ROBA_SCREEN_DEBUG
+    bool "Enable roBa status screen debug logs"
+    default n
+
+config ROBA_DIM_AFTER_MS
+    int "OLED dim timeout (ms)"
+    default 180000
+    help
+      Time of inactivity before switching to dim contrast.
+
+config ROBA_CONTRAST_BRIGHT
+    hex "OLED contrast (bright)"
+    default 0xCF
+    help
+      Contrast value used in normal (bright) mode.
+
+config ROBA_CONTRAST_DIM
+    hex "OLED contrast (dim)"
+    default 0x05
+    help
+      Contrast value used after dim timeout.
+
+config ROBA_PERIOD_IDLE_MS
+    int "Screen refresh period when idle (ms)"
+    default 1000
+    help
+      Refresh period used when idle.
+
+config ROBA_PERIOD_ACTIVE_MS
+    int "Screen refresh period when active (ms)"
+    default 200
+    help
+      Refresh period used during active updates.
+
+config ROBA_ACTIVE_HOLD_MS
+    int "Active refresh hold time (ms)"
+    default 3000
+    help
+      Time to keep active refresh period after activity.
+
+config ROBA_ANIM_PERIOD_MS
+    int "Animation period (ms)"
+    default 1000
+    help
+      Period for status screen animations.
+
+config ROBA_ROTATE_CW_90
+    bool "Rotate canvas 90 degrees clockwise"
+    default n
+    help
+      Rotate the screen rendering 90 degrees clockwise.
+
+endmenu

@@ -1,3 +1,6 @@
+
+#include "ui_assets/include_header.h"
+
 #include <zephyr/device.h>
 #include <zephyr/drivers/display.h>
 #include <zephyr/devicetree.h>
@@ -21,25 +24,13 @@
 #include <zmk/event_manager.h>
 #include <zmk/events/layer_state_changed.h>
 #include <zmk/events/battery_state_changed.h>
-
-#define DIM_AFTER_MS        180000u  /* 30秒無操作で暗くする（好きに変更OK） */
-#define CONTRAST_BRIGHT     0xCF     /* 明るい（好みで） */
-#define CONTRAST_DIM        0x05     /* 暗い（好みで） */
+#include <zmk/events/split_peripheral_status_changed.h>
+#include <zmk/split/bluetooth/peripheral.h>
 
 #if IS_ENABLED(CONFIG_ZMK_BLE)
 #include <zmk/ble.h>
 #endif
 
-#include "cattail_header/cattail_1.h"
-#include "cattail_header/cattail_2.h"
-#include "cattail_header/cattail_3.h"
-#include "cattail_header/cattail_4.h"
-// #include "cattail_header/cattail_5.h"
-// #include "cattail_header/cattail_6.h"
-
-#include "cattail_header/cattail_dim.h"
-
-/* USB状態で“充電中っぽい”を推定（後でVBUS GPIOに差し替え可能） */
 #if defined(__has_include)
   #if __has_include(<zmk/usb.h>)
     #include <zmk/usb.h>
@@ -51,12 +42,81 @@
   #define HAVE_ZMK_USB_H 0
 #endif
 
-#define DEBUG_ENABLE 0
-
-#if DEBUG_ENABLE == 1
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(roBa_screen, LOG_LEVEL_DBG);
+#ifdef CONFIG_ROBA_SCREEN_DEBUG
+#define ROBA_SCREEN_LOG_LEVEL LOG_LEVEL_DBG
+#else
+#define ROBA_SCREEN_LOG_LEVEL LOG_LEVEL_INF
 #endif
+/****** LOG level **
+LOG_LEVEL_NONE (0)  → nothing
+LOG_LEVEL_ERR  (1)  → LOG_ERR()
+LOG_LEVEL_WRN  (2)  → LOG_WRN(), LOG_ERR()
+LOG_LEVEL_INF  (3)  → LOG_INF(), LOG_WRN(), LOG_ERR()
+LOG_LEVEL_DBG  (4)  → LOG_DBG(), LOG_INF(), LOG_WRN(), LOG_ERR()
+
+// 完全に殺したいとき
+// LOG_MODULE_REGISTER(roBa_screen, LOG_LEVEL_NONE);
+***********************/
+LOG_MODULE_REGISTER(roBa_screen, ROBA_SCREEN_LOG_LEVEL);
+
+/* 3分無操作で暗くする（好きに変更OK） */
+#ifndef CONFIG_ROBA_DIM_AFTER_MS
+#define CONFIG_ROBA_DIM_AFTER_MS 180000u
+#endif
+#define DIM_AFTER_MS CONFIG_ROBA_DIM_AFTER_MS
+
+/* 明るい（好みで） */
+#ifndef CONFIG_ROBA_CONTRAST_BRIGHT
+#define CONFIG_ROBA_CONTRAST_BRIGHT 0xCF
+#endif
+#define CONTRAST_BRIGHT CONFIG_ROBA_CONTRAST_BRIGHT
+
+/* 暗い（好みで） */
+#ifndef CONFIG_ROBA_CONTRAST_DIM
+#define CONFIG_ROBA_CONTRAST_DIM 0x05
+#endif
+#define CONTRAST_DIM    CONFIG_ROBA_CONTRAST_DIM
+
+/* Refresh rate */
+#ifndef CONFIG_ROBA_PERIOD_IDLE_MS
+#define CONFIG_ROBA_PERIOD_IDLE_MS 1000u
+#endif
+#define PERIOD_IDLE_MS    CONFIG_ROBA_PERIOD_IDLE_MS
+
+#ifndef CONFIG_ROBA_PERIOD_ACTIVE_MS
+#define CONFIG_ROBA_PERIOD_ACTIVE_MS 200u
+#endif
+#define PERIOD_ACTIVE_MS  CONFIG_ROBA_PERIOD_ACTIVE_MS
+
+#ifndef CONFIG_ROBA_ACTIVE_HOLD_MS
+#define CONFIG_ROBA_ACTIVE_HOLD_MS 3000u
+#endif
+#define ACTIVE_HOLD_MS    CONFIG_ROBA_ACTIVE_HOLD_MS
+
+/* 1Hz固定 gitアニメ更新間隔 */
+#ifndef CONFIG_ROBA_ANIM_PERIOD_MS
+#define CONFIG_ROBA_ANIM_PERIOD_MS 1000u
+#endif
+#define ANIM_PERIOD_MS CONFIG_ROBA_ANIM_PERIOD_MS
+
+/* 回転方向：true=90°CW, false=90°CCW(=270°CW) */
+#ifdef CONFIG_ROBA_ROTATE_CW_90
+static const bool ROTATE_CW_90 = true;
+#else
+static const bool ROTATE_CW_90 = false;
+#endif
+
+static bool g_dimmed;
+
+static uint8_t g_frame_idx;
+static inline const art_frame_t *current_frame(void)
+{
+    if (g_dimmed) {
+        return &g_dim_frame;
+    }
+    return &g_frames[g_frame_idx];
+}
 
 /* ===============================
  * keymap display-name (自動追従)
@@ -95,24 +155,18 @@ static const char *get_layer_display_name(int layer) {
 static const struct device *oled;
 static uint8_t oled_buf[OLED_BUF_SIZE];
 
-static bool g_dimmed;
-
 static void oled_init(void) {
     if (oled) return;
 
     oled = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
     if (!device_is_ready(oled)) {
-#if DEBUG_ENABLE == 1
-        LOG_ERR("display not ready");
-#endif
+        LOG_DBG("display not ready");
         oled = NULL;
         return;
     }
 
     display_blanking_off(oled);
-#if DEBUG_ENABLE == 1
     LOG_DBG("display ready");
-#endif
 }
 
 static void oled_push(const uint8_t *buf) {
@@ -134,9 +188,7 @@ static void apply_dim(bool dim) {
 
     int rc = display_set_contrast(oled, dim ? CONTRAST_DIM : CONTRAST_BRIGHT);
     if (rc) {
-#if DEBUG_ENABLE == 1
         LOG_DBG("display_set_contrast rc=%d", rc);
-#endif
     } else {
         g_dimmed = dim;
     }
@@ -154,9 +206,6 @@ static lv_obj_t *canvas;
 #define CANVAS_BITMAP_BYTES (((CANVAS_W * CANVAS_H) + 7) / 8)
 static uint8_t canvas_buf[CANVAS_BITMAP_BYTES];
 
-/* 回転方向：true=90°CW, false=90°CCW(=270°CW) */
-static const bool ROTATE_CW_90 =false;
-
 /* イベントから直接描画しない 通知用 */
 static atomic_bool g_hint_dirty = true;
 
@@ -166,10 +215,6 @@ static atomic_bool g_hint_dirty = true;
  *   active:  200ms (5Hz)
  *   hold:   3000ms
  * =============================== */
-#define PERIOD_IDLE_MS    1000u
-#define PERIOD_ACTIVE_MS   200u
-#define ACTIVE_HOLD_MS    3000u
-
 static atomic_uint_fast32_t g_last_activity_ms;
 static atomic_uint_fast32_t g_timer_period_ms;
 static lv_timer_t *g_refresh_timer;
@@ -275,7 +320,6 @@ static void canvas_to_oled_rot(uint8_t *dst) {
  * USB / charging
  * =============================== */
 #define BATT_UNKNOWN (-1)
-#define PERIPHERAL_SOURCE 0 
 
 static atomic_int g_soc_left      = ATOMIC_VAR_INIT(BATT_UNKNOWN); /* 0-100, -1=unknown */
 static atomic_int g_soc_right     = ATOMIC_VAR_INIT(BATT_UNKNOWN); /* 0-100, -1=unknown */
@@ -284,6 +328,8 @@ static atomic_int g_chg_right     = ATOMIC_VAR_INIT(BATT_UNKNOWN); /* 0/1,  -1=u
 static atomic_int g_usb_left      = ATOMIC_VAR_INIT(BATT_UNKNOWN); /* 0/1,  -1=unknown */
 static atomic_int g_usb_right     = ATOMIC_VAR_INIT(BATT_UNKNOWN); /* 0/1,  -1=unknown */
 static atomic_int g_periph_source  = ATOMIC_VAR_INIT(BATT_UNKNOWN); /* peripheral src id, -1=unknown */
+
+static atomic_bool g_left_connected = ATOMIC_INIT(false);
 
 typedef struct {
     int layer;
@@ -371,12 +417,13 @@ static ui_state_t read_state(void) {
     s.ble = zmk_ble_active_profile_index() + 1;
 #endif
 
-    /* Left battery: eventキャッシュ優先、無ければAPI値 */
     int l_soc = atomic_load(&g_soc_left);
-    if (l_soc < 0) {
-        l_soc = (int)zmk_battery_state_of_charge();
+    /* L側が未接続なら unknown 扱い（値が残っていても表示しない） */
+    if (!atomic_load(&g_left_connected)) {
+       l_soc = -1;
     }
-    s.l_batt = clamp_soc(l_soc);
+    s.l_batt = l_soc;  /* 表示側で pct<0 を "--" にする */
+
     int r_soc= atomic_load(&g_soc_right);
     s.r_batt = clamp_soc(r_soc);              /* ← batt_listenerが更新 */
 
@@ -395,8 +442,8 @@ static ui_state_t read_state(void) {
 
 
 static bool state_equal(ui_state_t a, ui_state_t b) {
-    return a.layer      == b.layer && 
-           a.ble        == b.ble && 
+    return a.layer      == b.layer &&
+           a.ble        == b.ble &&
            a.l_batt     == b.l_batt &&
            a.r_batt     == b.r_batt &&
            a.l_charging == b.l_charging &&
@@ -444,9 +491,24 @@ static void draw_percent_mark(int x, int y) {
     canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 3, y + 4, true);
 }
 
+static void draw_dash_3x5(int x, int y) {
+    /* 3x5 の中央に横棒 */
+    for (int rx = 0; rx < 3; rx++) {
+        canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + rx, y + 2, true);
+    }
+}
+
 static void draw_batt_percent_small(int x, int y, int pct) {
     if (pct > 100) pct = 100;
-    if (pct < 0) pct = 0;
+
+    if (pct < 0) {
+        /* "--" 表示（未接続/不明） */
+        draw_dash_3x5(x + 0, y);
+        draw_dash_3x5(x + 4, y);
+        draw_percent_mark(x + 8, y);
+        return;
+    }
+    // if (pct < 0) pct = 0;
 
     if (pct == 100) {
         draw_digit_3x5(x + 0, y, 1);
@@ -478,6 +540,18 @@ static int batt_level4(int pct) {
     return 0;
 }
 
+static void draw_disconneted_peripheral(int x, int y) {
+    canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 1, y + 1, true);
+    canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 5, y + 1, true);
+    canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 2, y + 2, true);
+    canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 4, y + 2, true);
+    canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 3, y + 3, true);
+    canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 2, y + 4, true);
+    canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 4, y + 4, true);
+    canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 1, y + 5, true);
+    canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 5, y + 5, true);
+}
+
 static void draw_charge_bolt_small(int x, int y) {
     /* 4x5 くらいの小さい⚡ */
     canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 2, y + 0, true);
@@ -506,8 +580,8 @@ static void draw_usb_connection_small(int x, int y) {
     canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 3, y + 3, true);
     canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 4, y + 3, true);
     canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 5, y + 3, true);
+    canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 6, y + 3, true);
     canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 7, y + 3, true);
-    canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 8, y + 3, true);
     canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 0, y + 4, true);
     canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 1, y + 4, true);
     canvas_set_px_alpha1(canvas_buf, CANVAS_W, x + 3, y + 4, true);
@@ -551,27 +625,10 @@ static void draw_batt_icon_and_gauge(int x, int y, int pct, bool charging) {
     }
 }
 
-typedef struct {
-    const uint8_t *data; /* 32x64 1bpp MSB-first, row-major */
-} art_frame_t;
-
-static const art_frame_t g_frames[] = {
-    { cattail_1 },
-    { cattail_2 },
-    { cattail_3 },
-    { cattail_4 },
-//    { cattail_5 },
-//    { cattail_6 },
-};
-
-#define FRAME_COUNT     (ARRAY_SIZE(g_frames))
-#define ANIM_PERIOD_MS 1000u   /* 1Hz固定 */
-static uint8_t g_frame_idx;
-static lv_timer_t *g_anim_timer;
-
 #define ART_H 64
 #define ART_W 32
 #define ART_ROW_BYTES (ART_W / 8) /* 4 */
+static lv_timer_t *g_anim_timer;
 
 static void blit_art_32x64_to_canvas(int dst_x, int dst_y, const uint8_t *src) {
     /* x=0固定が一番安全（32幅なので行が常に4byte境界） */
@@ -622,14 +679,16 @@ static void build_canvas_from_state(ui_state_t st) {
     char line1[16] ="L  R";
     lv_canvas_draw_text(canvas, 0, 0, CANVAS_W, &dsc, line1);
 
-    draw_batt_icon_and_gauge(2, 10, st.l_batt, false);
 #if 1
-    if(st.l_charging) {
+    if(st.l_batt == -1) {
+      draw_disconneted_peripheral(8, 1);
+    } else if(st.l_charging) {
       draw_charge_bolt_small(8, 1);
     } else if(st.l_usb) {
       draw_usb_connection_small(8, 1);
     }
 #endif
+    draw_batt_icon_and_gauge(2, 10, st.l_batt, false);
     draw_batt_percent_small(3, 18, st.l_batt);
 
 #if 1
@@ -669,8 +728,8 @@ static void build_canvas_from_state(ui_state_t st) {
     draw_separator(62);
 
     /* drawing dot pict */
-    const uint8_t *art = g_dimmed ? cat_dim_0 : g_frames[g_frame_idx].data;
-    blit_art_32x64_to_canvas(0, 64, art);
+    const art_frame_t *frame = current_frame();
+    blit_art_32x64_to_canvas(0, 64, frame->data);
 }
 
 static void render_from_state(ui_state_t st) {
@@ -711,11 +770,9 @@ static void refresh_cb(lv_timer_t *t) {
     update_central_chg_from_gpio();
     ui_state_t now = read_state();
 
-#if 0
     /* 例：active中かつ非dimの時だけアニメ */
     // bool animate = active && !g_dimmed;
     // maybe_advance_frame(now_ms, animate);
-#endif 
 
     if (hinted || !state_equal(now, last)) {
         bool is_user_action = (now.layer != last.layer) || (now.ble != last.ble);
@@ -726,14 +783,12 @@ static void refresh_cb(lv_timer_t *t) {
 
         last = now;
         render_from_state(now);
-#if DEBUG_ENABLE == 1
+
         LOG_DBG("layer=%d name='%s' ble=%d l_batt=%d r_batt=%d l_charging=%d r_charging=%d",
                 now.layer, get_layer_display_name(now.layer),
-                now.ble, now.l_batt, now.r_batt, now.l_charging, now.r_charging,
+                now.ble, now.l_batt, now.r_batt, now.l_charging, now.r_charging);
         LOG_DBG("l_usb=%d r_usb=%d active=%d period=%u",
-                now.l_usb, now.r_usb
-                (int)active, (unsigned)want_period);
-#endif
+                now.l_usb, now.r_usb, (int)active, (unsigned)want_period);
     }
 }
 
@@ -757,7 +812,6 @@ static void anim_cb(lv_timer_t *t) {
 /* ===============================
  * ZMK hooks
  * =============================== */
-
 static int status_listener(const zmk_event_t *eh) {
     if (as_zmk_layer_state_changed(eh)) {
         mark_activity();
@@ -773,36 +827,50 @@ ZMK_SUBSCRIPTION(status_listener, zmk_layer_state_changed);
 
 static int batt_listener(const zmk_event_t *eh) {
     const struct zmk_battery_state_changed *br = as_zmk_battery_state_changed(eh);
-    if (br) {
-        atomic_store(&g_soc_right, (int)br->state_of_charge);
-
-        int now = atomic_load(&g_chg_right);
-        if (now == BATT_UNKNOWN) {
-          bool usb = usb_connected_guess();
-          atomic_store(&g_usb_right, usb);
-          atomic_store(&g_chg_right, (usb && br->state_of_charge < 100) ? 1 : 0);
-        }
-
-        mark_dirty_only();
-        return ZMK_EV_EVENT_BUBBLE;
-    }
-
     const struct zmk_peripheral_battery_state_changed *bl =
         as_zmk_peripheral_battery_state_changed(eh);
 
-    if (bl) {
-        int rid = atomic_load(&g_periph_source);
-        if (rid < 0) {
+    if (br && br->state_of_charge <= 100) {
+        atomic_store(&g_soc_right, (int)br->state_of_charge);
+    }
+
+    if (bl && bl->state_of_charge <= 100) {
+        /* 1) 最初に来た source を「左」として採用 */
+        int src = atomic_load(&g_periph_source);
+        if (src < 0) {
             atomic_store(&g_periph_source, (int)bl->source);
-            rid = (int)bl->source;
+            src = (int)bl->source;
         }
 
-        if (bl->source == PERIPHERAL_SOURCE) {
-            atomic_store(&g_soc_left, (int)bl->state_of_charge);
+        /* 2) 採用source一致なら左SOC更新 */
+        if ((int)bl->source == src) {
+            int prev = atomic_load(&g_soc_left);
+            int soc  = (int)bl->state_of_charge;
 
-            mark_dirty_only();
+            /*
+             * Disconnect inference:
+             * ログ上、切断直後に peripheral batt=0 が来る。
+             * ただし「実際に0%」の可能性も理論上あるので、
+             * 直前が 10%以上だったのに突然0になった場合だけ切断扱いにする。
+             */
+            if (soc == 0 && prev >= 10) {
+                atomic_store(&g_left_connected, false);
+                atomic_store(&g_soc_left, -1);
+                atomic_store(&g_periph_source, -1);
+
+                LOG_DBG("LEFT disconnect inferred by batt=0 (prev=%d src=%d)",
+                        prev, (int)bl->source);
+
+                return ZMK_EV_EVENT_BUBBLE;
+            }
+
+            /* Normal update */
+            atomic_store(&g_soc_left, soc);
+            atomic_store(&g_left_connected, true);
+
+            LOG_DBG("LEFT batt update: soc=%d src=%d (connected=1)",
+                    soc, (int)bl->source);
         }
-        return ZMK_EV_EVENT_BUBBLE;
     }
 
     return ZMK_EV_EVENT_BUBBLE;
@@ -818,9 +886,8 @@ static void chg_input_cb(struct input_event *evt) {
     if (evt->type != INPUT_EV_KEY) return;
     if (evt->code != INPUT_KEY_F24) return;   // 右CHG用に割り当てた code
 
-#if DEBUG_ENABLE == 1
     LOG_DBG("PERIPHERAL_CHG evt: type=%d code=%d value=%d", evt->type, evt->code, evt->value);
-#endif
+
     /* value: 1=press, 0=release （ACTIVE_LOWなら “充電中=1” にできる） */
     // g_right_charging = evt->value ? 1 : 0;
     atomic_store(&g_chg_left, evt->value ? 1 : 0);
@@ -851,11 +918,9 @@ lv_obj_t *zmk_display_status_screen(void) {
     /* LVGL側で勝手に表示しない（OLEDはdisplay_writeで出す） */
     lv_obj_add_flag(canvas, LV_OBJ_FLAG_HIDDEN);
 
-#if DEBUG_ENABLE == 1
     for (int i = 0; i < LAYER_COUNT; i++) {
         LOG_DBG("names[%d]='%s'", i, layer_display_names[i]);
     }
-#endif
 
     /* 初期状態：idleで開始（操作が来たら即activeへ） */
     uint32_t boot_now = k_uptime_get_32();
